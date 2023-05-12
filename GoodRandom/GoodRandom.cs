@@ -11,16 +11,16 @@ namespace GoodRandom
 
         public int GetDiceRoll(int sides) => GetDiceRolls(sides, 1).First();
 
-        public IEnumerable<int> GetDiceRolls(int sides, int times, int batchSize = 0) {
+        public IEnumerable<int> GetDiceRolls(int sides, int times) {
             if (sides <= 1)
             {
                 throw new ArgumentException("Number of sides must be greater than 1");
             }
             
-            return GetFairRandomSet(Enumerable.Range(1, sides).ToArray(), times, batchSize);
+            return GetFairRandomSet(Enumerable.Range(1, sides).ToArray(), times);
         }
 
-        public IEnumerable<T> GetFairRandomSet<T>(T[] values, int times, int batchSize = 0) {
+        public IEnumerable<T> GetFairRandomSet<T>(T[] values, int times) {
             var size = values.Count();
             var neededBytes = NeededBytes(size);
             var highestFairChoice = HighestFairNumber(size);
