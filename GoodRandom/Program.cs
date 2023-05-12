@@ -4,8 +4,8 @@ using System.Security.Cryptography;
 using System.Text;
 using GoodRandom;
 
-var random = new GoodRandomGenerator(new SecureRandomProvider(4));
-var fastRandom = new GoodRandomGenerator(new PseudoRandomProvider(4));
+var random = new GoodRandomGenerator(new SecureRandomProvider(1000));
+var fastRandom = new GoodRandomGenerator(new PseudoRandomProvider(1000));
 void rollTester(int sides, int count, GoodRandomGenerator generator)
 {
     //var rolls = Enumerable.Range(1, sides).Select(i => (i, 0)).ToDictionary(x => x.i, x => x.Item2);
@@ -85,9 +85,23 @@ void roller()
     }
 }
 
+void unfair() {
+    var sides = 3;
+    var count = 100000000;
+    var rolls = Enumerable.Range(0, sides).Select(i => (i, 0)).ToDictionary(x => x.i, x => x.Item2);
+    for (var i = 0; i < count; i++) {
+        var choice = RandomNumberGenerator.GetInt32(int.MaxValue) % sides;
+        rolls[choice] = rolls[choice] + 1;
+    }
+    foreach (var roll in rolls)
+    {
+        Console.WriteLine($"{roll.Key}:{roll.Value} {(double)(roll.Value) / count}");
+    }
+}
+
 var stopwatch = Stopwatch.StartNew();
-var testSize = 1000;
-var sides = int.MaxValue - 1;
+var testSize = 1000000;
+var sides = 20; //int.MaxValue - 1;
 Console.WriteLine($"Testing {testSize} iterations");
 Console.WriteLine("System.Cryptography Random Number Generator");
 rollTester(sides, testSize, random);
@@ -104,4 +118,3 @@ Console.WriteLine($"all took {stopwatch.ElapsedMilliseconds}ms");
 //stats();
 
 Console.WriteLine("End");
-
