@@ -21,7 +21,7 @@ namespace GoodRandom
         }
 
         private void refillBuffer() {
-            if(index == bufferSize) {
+            if(index % bufferSize == 0) {
                 RandomNumberGenerator.Fill(buffer);
                 index = 0;
             }

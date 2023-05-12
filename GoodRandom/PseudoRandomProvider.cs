@@ -25,7 +25,7 @@ namespace GoodRandom {
         }
 
         private void refillBuffer() {
-            if(index == bufferSize) {
+            if(index % bufferSize == 0) {
                 random.NextBytes(buffer);
                 index = 0;
             }
