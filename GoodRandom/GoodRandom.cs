@@ -57,5 +57,18 @@ namespace GoodRandom
         int HighestFairNumber (int setSize) => (((int)(Math.Pow(2, NeededBytes(setSize) * 8)) - 1) / setSize) * setSize - 1;
         int NeededBytes(int sides) => (int)(Math.Log2(sides) / 8) + 1;
 
+        /// <summary>
+        /// Calculates the number of bytes needed to maximize the the chance of choosing a fair number with minimum
+        /// number of misses while also minimize the number of random bytes needed to be generated.
+        /// </summary>
+        /// <remarks>
+        /// Needs to be enough bytes so that the highest fair number is less than the MaxValue of the combined number of
+        /// bytes.
+        ///
+        /// Also limited the number of bytes to 4 since we currently only allow up to an integer's worth of choices.
+        /// </remarks>
+        /// <param name="sides">Number of choices that we are rolling for.</param>
+        /// <returns>Number of bytes needed to fairly choose a fair random without too many misses. Max 4.</returns>
+        protected virtual int NeededBytes(int sides) => sides < 1 ? 1 : Math.Min((int)(Math.Log2((uint)sides * 2) / 8) + 1, 4);
     }
 }
