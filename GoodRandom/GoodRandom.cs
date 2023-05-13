@@ -1,39 +1,45 @@
 using System.Security.Cryptography;
 
-namespace GoodRandom 
+namespace GoodRandom
 {
-    public class GoodRandomGenerator 
+    public class GoodRandomGenerator
     {
         private IRandomProvider provider;
-        public GoodRandomGenerator(IRandomProvider provider) {
+
+        public GoodRandomGenerator(IRandomProvider provider)
+        {
             this.provider = provider;
         }
 
         public int GetDiceRoll(int sides) => GetDiceRolls(sides, 1).First();
 
-        public IEnumerable<int> GetDiceRolls(int sides, int times) {
+        public IEnumerable<int> GetDiceRolls(int sides, int times)
+        {
             if (sides <= 1)
             {
                 throw new ArgumentException("Number of sides must be greater than 1");
             }
-            
+
             return GetFairRandomSet(Enumerable.Range(1, sides).ToArray(), times);
         }
 
-        public IEnumerable<T> GetFairRandomSet<T>(T[] values, int times) {
+        public IEnumerable<T> GetFairRandomSet<T>(T[] values, int times)
+        {
             var size = values.Count();
             var neededBytes = NeededBytes(size);
             var highestFairChoice = HighestFairNumber(size);
 
-            for (var i = 0; i < times; i++) {
+            for (var i = 0; i < times; i++)
+            {
                 var fair = GetFairInt(0, size);
                 yield return values[(fair % size)];
             }
         }
 
-        public int GetFairInt(int minInclusive, int maxExclusive) {
+        public int GetFairInt(int minInclusive, int maxExclusive)
+        {
             var size = maxExclusive - minInclusive;
-            
+
             var neededBytes = NeededBytes(size);
             var highestFairChoice = HighestFairNumber(size);
             int choice;
@@ -41,21 +47,24 @@ namespace GoodRandom
             {
                 choice = GetBigEnoughNumber(neededBytes);
             } while (choice > highestFairChoice);
+
             return choice;
         }
 
-        int GetBigEnoughNumber(int neededBytes) {
+        int GetBigEnoughNumber(int neededBytes)
+        {
             int n = provider.GetNextByte();
             for (var i = 1; i < neededBytes; i++)
             {
                 n = n << 4;
                 n = n | provider.GetNextByte();
             }
+
             return n;
         }
 
-        int HighestFairNumber (int setSize) => (((int)(Math.Pow(2, NeededBytes(setSize) * 8)) - 1) / setSize) * setSize - 1;
-        int NeededBytes(int sides) => (int)(Math.Log2(sides) / 8) + 1;
+        int HighestFairNumber(int setSize) =>
+            (((int)(Math.Pow(2, NeededBytes(setSize) * 8)) - 1) / setSize) * setSize - 1;
 
         /// <summary>
         /// Calculates the number of bytes needed to maximize the the chance of choosing a fair number with minimum
